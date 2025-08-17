@@ -2,6 +2,8 @@ package TestComponents;
 
 import java.io.IOException;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
@@ -19,6 +21,27 @@ public class Listener extends BaseTest implements ITestListener{
 	private static final ExtentReports extent = ExtentReportNG.getReportObject();
     private static final ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>(); //Thread safe
 
+    private static Appender EXTENT_BRIDGE; // hold one instance
+
+    @Override
+    public void onStart(ITestContext context) {
+        // Ensure Extent is initialized
+        ExtentReportNG.getReportObject();
+
+        // Attach our Log4j -> Extent appender once
+        Logger root = Logger.getRootLogger();
+        if (EXTENT_BRIDGE == null) {
+            EXTENT_BRIDGE = new ExtentLog4jAppender();
+            EXTENT_BRIDGE.setName("EXTENT");
+        }
+        if (root.getAppender("EXTENT") == null) {
+            root.addAppender(EXTENT_BRIDGE);
+        }
+    }
+    
+    public static ExtentTest getCurrentTest() {
+        return extentTest.get();
+    }
 	
 	@Override
 	public void onTestStart(ITestResult result) {
@@ -31,6 +54,7 @@ public class Listener extends BaseTest implements ITestListener{
 	public void onTestSuccess(ITestResult result) {
 		// TODO Auto-generated method stub
 		extentTest.get().log(Status.PASS, "Test Passed");
+		extentTest.remove();
 		
 	}
 
@@ -57,6 +81,7 @@ public class Listener extends BaseTest implements ITestListener{
 			e.printStackTrace();
 		}
 		extentTest.get().addScreenCaptureFromPath(filePath, result.getMethod().getMethodName());
+		extentTest.remove();
 	
 	}
 
@@ -73,15 +98,14 @@ public class Listener extends BaseTest implements ITestListener{
 	}
 
 	@Override
-	public void onStart(ITestContext context) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onFinish(ITestContext context) {
 		// TODO Auto-generated method stub
 		extent.flush();
+		
+		 Logger root = Logger.getRootLogger();
+	        if (root.getAppender("EXTENT") != null) {
+	            root.removeAppender("EXTENT");
+	        }
 		
 	}
 	

@@ -15,7 +15,7 @@ public class CartPage extends AbstractComponent {
 	WebDriver driver;
 
 	@FindBy(xpath = "//li[@class='totalRow']/button")
-	WebElement checkoutEle;
+	private WebElement checkoutEle;
 
 	@FindBy(css = ".cartSection h3")
 	private List<WebElement> cartProducts;

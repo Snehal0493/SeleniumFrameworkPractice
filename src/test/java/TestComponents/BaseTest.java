@@ -3,6 +3,7 @@ package TestComponents;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.Dimension;
+import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -120,5 +121,15 @@ public class BaseTest {
 	{
 		driver.quit();
 	}
+	
+	 static {
+	        URL url = BaseTest.class.getClassLoader().getResource("log4j.properties");
+	        System.out.println("Log4j config URL = " + url);
+	        if (url != null) {
+	            PropertyConfigurator.configure(url);
+	        } else {
+	            System.err.println("log4j.properties NOT found on classpath");
+	        }
+	    }
 
 }

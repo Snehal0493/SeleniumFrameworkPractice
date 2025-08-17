@@ -30,15 +30,16 @@ public class LoginPage extends AbstractComponent{
 	//PageFactory
 	
 	@FindBy(id="userEmail")
-	WebElement userEmail;
+	private WebElement userEmail;
 	
 	@FindBy(id="userPassword")
-	WebElement passwordEle;
+	private WebElement passwordEle;
 	
 	@FindBy(id="login")
-	WebElement submit;
+	private WebElement submit;
+	
 	@FindBy(css="[class*='flyInOut']")
-	WebElement errorMessage;
+	private WebElement errorMessage;
 
 	
 	public ProductCatalogue loginApplication(String email,String password) throws FindFailed
